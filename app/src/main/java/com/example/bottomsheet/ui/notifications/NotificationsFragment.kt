@@ -13,9 +13,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.bottomsheet.R
 
-class NotificationsFragment : Fragment() {
+class NotificationsFragment : Fragment(),INotifications {
 
-    private lateinit var notificationsViewModel: NotificationsViewModel
     lateinit var ageCountTV: TextView
     lateinit var ageTV: TextView
     lateinit var rateTV: TextView
@@ -31,44 +30,30 @@ class NotificationsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        notificationsViewModel =
-            ViewModelProviders.of(this).get(NotificationsViewModel::class.java)
 
         val root = inflater.inflate(R.layout.fragment_notifications, container, false)
 
 
         initViews(root)
+
+        val notificationsPresenter:INotificationsPresenter=NotificationsPresenter(context!!,this)
+
+        notificationsPresenter.initFonts(context!!)
+
+        notificationsPresenter.bindData()
+
+        notificationsPresenter.setListeners()
+
         manCheck.isChecked = true
-        val fonts = initFonts()
 
-        setFonts(fonts.first, fonts.second)
 
-        setListeners()
-
-        textData()
 
 
         return root
     }
 
-    fun setListeners() {
-        manCheck.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener {
-            override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
-                if (isChecked) {
-                    womanCheck.isChecked = false
-                }
-            }
-        })
-        womanCheck.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener {
-            override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
-                if (isChecked) {
-                    manCheck.isChecked = false
-                }
-            }
-        })
-    }
 
-    fun initViews(root: View) {
+    override fun initViews(root: View) {
         manCheck = root.findViewById(R.id.man_check)
         womanCheck = root.findViewById(R.id.woman_check)
         rateTV = root.findViewById(R.id.rate_tv)
@@ -79,42 +64,5 @@ class NotificationsFragment : Fragment() {
         emailTV = root.findViewById(R.id.email_tv)
         ageCountTV = root.findViewById(R.id.age_count_tv)
         ageTV = root.findViewById(R.id.age_tv)
-    }
-
-    fun initFonts(): Pair<Typeface, Typeface> {
-        val face = Typeface.createFromAsset(
-            activity!!.assets,
-            "fonts/Gilroy-Black.ttf"
-        )
-        val abhayya = Typeface.createFromAsset(
-            activity!!.assets,
-            "fonts/AbhayaLibre-Regular.ttf"
-        )
-        return Pair(face, abhayya)
-    }
-
-    fun setFonts(face: Typeface, abhayya: Typeface) {
-        rateTV.setTypeface(face)
-        msgTV.setTypeface(face)
-        moreInfoTV.setTypeface(face)
-        nameTV.setTypeface(abhayya)
-        emailTV.setTypeface(abhayya)
-        ageCountTV.setTypeface(abhayya)
-        ageTV.setTypeface(abhayya)
-        textView.setTypeface(face)
-
-    }
-
-    fun textData() {
-        msgTV.text = "Написать\nсообщение"
-        rateTV.text = "Оценить\nприложение"
-        moreInfoTV.text = "Подробнее о\nприложении"
-        nameTV.text = "Рикардо"
-        emailTV.text = "ricardomilos@flex.ru"
-        ageCountTV.text = "37"
-        ageTV.text = "лет"
-        notificationsViewModel.text.observe(this, Observer {
-            textView.text = it
-        })
     }
 }

@@ -1,6 +1,6 @@
 package com.example.bottomsheet.ui.home
 
-import android.graphics.Typeface
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,60 +8,50 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import com.example.bottomsheet.R
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), IHome {
 
-    private lateinit var homeViewModel: HomeViewModel
-
+    lateinit var textView: TextView
+    lateinit var progressBar: ProgressBar
+    lateinit var secondProgressBar: ProgressBar
+    lateinit var secondProgressTV: TextView
+    lateinit var progressTV: TextView
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        homeViewModel =
-            ViewModelProviders.of(this).get(HomeViewModel::class.java)
+
         val root = inflater.inflate(R.layout.fragment_home, container, false)
-        val textView: TextView = root.findViewById(R.id.text_home)
-        val progressBar: ProgressBar = root.findViewById(R.id.progress_horizontal)
-        val secondProgressTV: TextView = root.findViewById(R.id.second_progress_values_tv)
-        val secondProgressBar: ProgressBar = root.findViewById(R.id.second_progress_horizontal)
-        val face = Typeface.createFromAsset(
-            activity!!.assets,
-            "fonts/Gilroy-Black.ttf"
-        )
-        val progressTV: TextView = root.findViewById(R.id.progress_values_tv)
 
-        CoroutineScope(Dispatchers.Main).launch {
-            while (true) {
-                for (i in 0..progressBar.max) {
-                    delay(50)
-                    progressTV.typeface = face
-                    progressTV.text = i.toString() + "%"
-                    progressBar.progress = i
-                    secondProgressTV.typeface = face
-                    secondProgressTV.text = i.toString() + "%"
-                    secondProgressBar.progress = i
+        initViews(root)
 
-                }
-            }
+        val homePresenter: IHomePresenter = HomePresenter(this, this)
 
 
-        }
+        initFonts(context!!, homePresenter)
 
 
+        homePresenter.bindData()
 
-        textView.typeface = face
-        homeViewModel.text.observe(this, Observer {
-            textView.text = it
-        })
+        homePresenter.progressThread(progressBar)
+
         return root
     }
+
+    override fun initViews(root: View) {
+        textView = root.findViewById(R.id.text_home)
+        progressBar = root.findViewById(R.id.progress_horizontal)
+        secondProgressTV = root.findViewById(R.id.second_progress_values_tv)
+        secondProgressBar = root.findViewById(R.id.second_progress_horizontal)
+        progressTV = root.findViewById(R.id.progress_values_tv)
+
+    }
+
+    override fun initFonts(context: Context, homePresenter: IHomePresenter) {
+        homePresenter.initFonts(context!!)
+    }
+
 }
