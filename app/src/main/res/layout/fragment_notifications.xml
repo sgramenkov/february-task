@@ -95,8 +95,8 @@
             <ToggleButton
                 android:id="@+id/man_check"
                 style="@style/ToggleBtn"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginLeft="20dp"
                 android:gravity="center"
                 android:textAlignment="center"
@@ -106,8 +106,8 @@
             <ToggleButton
                 android:id="@+id/woman_check"
                 style="@style/ToggleBtn"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginLeft="20dp"
                 android:gravity="center"
                 android:textAlignment="center"
